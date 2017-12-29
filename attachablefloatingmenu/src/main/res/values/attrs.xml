@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <declare-styleable name="CustomFab">
+        <attr name="size" format="enum">
+            <enum name="normal" value="0" />
+            <enum name="mini" value="1" />
+        </attr>
+        <attr name="color_normal" format="color" />
+        <attr name="color_selected" format="color" />
+    </declare-styleable>
+</resources>
