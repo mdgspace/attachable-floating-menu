@@ -4,7 +4,7 @@ import android.support.animation.DynamicAnimation
 import android.support.animation.SpringAnimation
 import android.support.animation.SpringForce
 
-class FabScaleAnims(fab: CustomFab) {
+class FabScaleAnim(fab: FloatingActionButton) {
 
     private val anim = SpringAnimation(fab, fab.scale)
     private val springForce = SpringForce(1f)

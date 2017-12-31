@@ -14,7 +14,7 @@ import android.util.Log
 import android.widget.ImageButton
 
 
-class CustomFab @JvmOverloads constructor(
+class FloatingActionButton @JvmOverloads constructor(
         context: Context,
         attrSet: AttributeSet? = null,
         defStyleAttr: Int = 0,
@@ -24,7 +24,7 @@ class CustomFab @JvmOverloads constructor(
     enum class FabSize { SIZE_NORMAL, SIZE_MINI }
 
     private companion object {
-        const val LOG_TAG = "CustomFab"
+        const val LOG_TAG = "FloatingActionButton"
         const val SIZE_NORMAL = 50f
         const val SIZE_MINI = 30f
         @ColorInt const val DEFAULT_COLOR_NORMAL = Color.WHITE
@@ -67,15 +67,15 @@ class CustomFab @JvmOverloads constructor(
     val arr = IntArray(2)
     val pCenterX by lazy { left + width / 2f }
     val pCenterY by lazy { top + height / 2f }
-    val scale = object : FloatPropertyCompat<CustomFab>("scale") {
-        override fun getValue(`object`: CustomFab?) = scaleX
+    val scale = object : FloatPropertyCompat<FloatingActionButton>("scale") {
+        override fun getValue(`object`: FloatingActionButton?) = scaleX
 
-        override fun setValue(`object`: CustomFab?, value: Float) {
+        override fun setValue(`object`: FloatingActionButton?, value: Float) {
             scaleX = value
             scaleY = value
         }
     }
-    val mAnim = FabScaleAnims(this)
+    val mAnim = FabScaleAnim(this)
 
     // Init XML Attrs.
     init {

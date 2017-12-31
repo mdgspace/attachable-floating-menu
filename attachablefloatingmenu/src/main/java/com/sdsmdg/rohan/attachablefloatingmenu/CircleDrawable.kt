@@ -9,7 +9,7 @@ import android.graphics.drawable.shapes.OvalShape
 import android.support.annotation.ColorInt
 import android.util.Log
 
-class CircleDrawable(
+internal class CircleDrawable(
         val circleDiameter: Float,
         @ColorInt circleColor: Int,
         val blurRadius: Float = 0f,
