@@ -10,7 +10,6 @@ import android.support.animation.FloatPropertyCompat
 import android.support.annotation.ColorInt
 import android.support.v4.content.ContextCompat
 import android.util.AttributeSet
-import android.util.Log
 import android.widget.ImageButton
 
 
@@ -19,20 +18,18 @@ class FloatingActionButton @JvmOverloads constructor(
         attrSet: AttributeSet? = null,
         defStyleAttr: Int = 0,
         defStyleRes: Int = 0
-) : ImageButton(context, attrSet, defStyleAttr, defStyleRes) {
-
-    enum class FabSize { SIZE_NORMAL, SIZE_MINI }
+) : ImageButton(context, attrSet, defStyleAttr) {
 
     private companion object {
         const val LOG_TAG = "FloatingActionButton"
-        const val SIZE_NORMAL = 50f
-        const val SIZE_MINI = 30f
-        @ColorInt const val DEFAULT_COLOR_NORMAL = Color.WHITE
-        @ColorInt const val DEFAULT_COLOR_SELECTED: Int = 0xFFB71C1C.toInt() // Bug in compiler
+        @ColorInt
+        const val DEFAULT_COLOR_NORMAL = Color.WHITE
+        @ColorInt
+        const val DEFAULT_COLOR_SELECTED: Int = 0xFFB71C1C.toInt() // Bug in compiler
     }
 
     // XML attributes
-    var fabSize: FabSize = FabSize.SIZE_NORMAL
+    var fabSize: Size = Size.NORMAL
         set(value) {
             field = value
             setDefBackground()
@@ -47,17 +44,13 @@ class FloatingActionButton @JvmOverloads constructor(
             }
             setDefBackground()
             field = value
-            Log.d("$LOG_TAG/state", "Changed! new val = $value")
         }
     private val fabColorNormal: Int
     private val fabColorSelected: Int
     private var fabColor: Int = DEFAULT_COLOR_NORMAL
     private val fabPaint = Paint(Paint.ANTI_ALIAS_FLAG)
     private val desiredFabDiameter
-        get() = when (fabSize) {
-            FabSize.SIZE_NORMAL -> SIZE_NORMAL.toPixel()
-            FabSize.SIZE_MINI -> SIZE_MINI.toPixel()
-        }
+        get() = fabSize.value
     private inline val fabDiameter get() = width
     private val desiredIconSize get() = 24f.toPixel()
     private val iconSize get() = desiredIconSize + (fabDiameter - desiredFabDiameter) / 2f
@@ -80,15 +73,15 @@ class FloatingActionButton @JvmOverloads constructor(
     // Init XML Attrs.
     init {
         val a = context.theme.obtainStyledAttributes(attrSet,
-                R.styleable.CustomFab, defStyleAttr, defStyleRes)
+                R.styleable.FloatingActionButton, defStyleAttr, defStyleRes)
         try {
-            fabSize = when (a.getInteger(R.styleable.CustomFab_size, 0)) {
-                0 -> FabSize.SIZE_NORMAL
-                else -> FabSize.SIZE_MINI
+            fabSize = when (a.getInteger(R.styleable.FloatingActionButton_size, 0)) {
+                0 -> Size.NORMAL
+                else -> Size.MINI
             }
-            fabColorNormal = a.getColor(R.styleable.CustomFab_color_normal, DEFAULT_COLOR_NORMAL)
+            fabColorNormal = a.getColor(R.styleable.FloatingActionButton_color_normal, DEFAULT_COLOR_NORMAL)
             fabColorSelected = a.getColor(
-                    R.styleable.CustomFab_color_selected, DEFAULT_COLOR_SELECTED)
+                    R.styleable.FloatingActionButton_color_selected, DEFAULT_COLOR_SELECTED)
         } finally {
             a.recycle()
         }
