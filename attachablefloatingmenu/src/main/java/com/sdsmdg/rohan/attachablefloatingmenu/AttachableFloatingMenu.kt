@@ -18,7 +18,7 @@ class AttachableFloatingMenu @JvmOverloads constructor(
         attrSet: AttributeSet? = null,
         defStyleAttr: Int = 0,
         defStyleRes: Int = 0
-) : ViewGroup(context, attrSet, defStyleAttr, defStyleRes) {
+) : ViewGroup(context, attrSet, defStyleAttr) {
 
     var isAnimating = false
     var motionX: Float = 0.0f
@@ -40,7 +40,7 @@ class AttachableFloatingMenu @JvmOverloads constructor(
     val minR = 75f.toPixel()
     val angle = 42.0
     val pivotR = 40f.toPixel()
-    var coordinate = mutableListOf<Point<Double>>()
+    private var coordinate = mutableListOf<Point<Double>>()
     var theta = mutableListOf<Double>()
     val centerCirclePaint = Paint(Paint.ANTI_ALIAS_FLAG)
     val interpolator = DecelerateInterpolator(0.8f)
@@ -55,10 +55,10 @@ class AttachableFloatingMenu @JvmOverloads constructor(
         centerCirclePaint.strokeWidth = 3f.toPixel()
         centerCirclePaint.color = Color.WHITE
         centerCirclePaint.alpha = 100
-        addView(FloatingActionButton(context), 0)
-        addView(FloatingActionButton(context), 1)
-        val smallView = FloatingActionButton(context)
-        smallView.fabSize = FloatingActionButton.FabSize.SIZE_MINI
+        addView(Fab(context), 0)
+        addView(Fab(context), 1)
+        val smallView = Fab(context)
+        smallView.fabSize = Fab.Size.MINI
         addView(smallView, 2)
     }
 
@@ -86,7 +86,7 @@ class AttachableFloatingMenu @JvmOverloads constructor(
 
     override fun onLayout(changed: Boolean, l: Int, t: Int, r: Int, b: Int) {
         for (index in 0 until childCount) {
-            val child = getChildAt(index) as FloatingActionButton
+            val child = getChildAt(index) as Fab
             val left = (coordinate[index].x - child.measuredWidth / 2f).floor()
             val top = (coordinate[index].y - child.measuredHeight / 2f).floor()
             child.layout(
@@ -111,7 +111,7 @@ class AttachableFloatingMenu @JvmOverloads constructor(
 
     private fun animateMe() {
         for (i in 0 until childCount) {
-            val child = getChildAt(i) as FloatingActionButton
+            val child = getChildAt(i) as Fab
             if (checkConditions(i)) {
                 val dist = getDistance(child.pCenterX, child.pCenterY, motionX, motionY)
                 if (dist > minR) break
@@ -130,8 +130,6 @@ class AttachableFloatingMenu @JvmOverloads constructor(
         }
     }
 
-    private var c = 0
-    private var prev = c
     private fun checkConditions(i: Int): Boolean {
         val slopeAngle = -getTheta(startX, startY, motionX, motionY)
         var midMax = theta[i] + angle.toRadians() / 2
@@ -152,12 +150,6 @@ class AttachableFloatingMenu @JvmOverloads constructor(
             midMin = min
             midMax = max
         }
-        if (c - prev > 100 && i == 0) {
-            /*Log.d("$LOG_TAG/vals", "(${slopeAngle.toDeg()}, ${min.toDeg()}, ${midMin.toDeg()}," +
-                    " ${midMax.toDeg()}, ${max.toDeg()})")*/
-            prev = c
-        }
-        c++
         return when {
             min == midMin && slopeAngle in min..midMax -> true
             max != midMax && slopeAngle in -PI / 2..max -> true

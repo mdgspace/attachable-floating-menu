@@ -22,10 +22,12 @@ internal class CircleDrawable(
         const val LOG_TAG = "CircleDrawable"
         const val INVALID_CIRCLE_RADIUS_ERR = "Circle radius must be valid"
     }
-    
+
     val mPaint = Paint(Paint.ANTI_ALIAS_FLAG)
 
     init {
+        Log.d("$LOG_TAG/", "d = $circleDiameter, shadowrad = $blurRadius," +
+                " xOff = $xShadowOffset, yOff = $yShadowOffset")
         if (circleDiameter <= 0f) throw IllegalArgumentException(INVALID_CIRCLE_RADIUS_ERR)
         val mBound = Rect()
         when (blurRadius) {
@@ -37,9 +39,9 @@ internal class CircleDrawable(
             }
             else -> {
                 mBound.left = 0
-                mBound.right = circleDiameter.floor() + 20
+                mBound.right = circleDiameter.floor() + 30f.toPixel().toInt()
                 mBound.top = 0
-                mBound.bottom = circleDiameter.floor() + 20
+                mBound.bottom = circleDiameter.floor() + 30f.toPixel().toInt()
             }
         }
         bounds = mBound

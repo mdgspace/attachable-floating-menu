@@ -56,6 +56,3 @@ internal fun getDistance(x1: Float, y1: Float, x2: Float, y2: Float): Double {
     }
 }*/
 
-enum class Size(val value: Float) {
-    NORMAL(50f), MINI(30f)
-}

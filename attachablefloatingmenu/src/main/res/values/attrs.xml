@@ -1,11 +1,15 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <declare-styleable name="FloatingActionButton">
+    <declare-styleable name="Fab">
         <attr name="size" format="enum">
             <enum name="normal" value="0" />
             <enum name="mini" value="1" />
         </attr>
         <attr name="color_normal" format="color" />
         <attr name="color_selected" format="color" />
+        <attr name="shadow_radius" format="dimension" />
+        <attr name="x_shadow_offset" format="dimension" />
+        <attr name="y_shadow_offset" format="dimension" />
+        <attr name="shadow_color" format="color"/>
     </declare-styleable>
 </resources>
