@@ -10,6 +10,12 @@
         <attr name="shadow_radius" format="dimension" />
         <attr name="x_shadow_offset" format="dimension" />
         <attr name="y_shadow_offset" format="dimension" />
-        <attr name="shadow_color" format="color"/>
+        <attr name="shadow_color" format="color" />
+    </declare-styleable>
+    <declare-styleable name="AttachableFloatingMenu">
+        <attr name="r" format="dimension" />
+        <attr name="minR" format="dimension" />
+        <attr name="pivotR" format="dimension" />
+        <attr name="angularSeparation" format="float" />
     </declare-styleable>
 </resources>

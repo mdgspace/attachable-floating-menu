@@ -19,8 +19,7 @@ import kotlin.reflect.KProperty
 class Fab @JvmOverloads constructor(
         context: Context,
         attrSet: AttributeSet? = null,
-        defStyleAttr: Int = 0,
-        defStyleRes: Int = 0
+        defStyleAttr: Int = 0
 ) : ImageButton(context, attrSet, defStyleAttr) {
 
     companion object {
@@ -36,14 +35,24 @@ class Fab @JvmOverloads constructor(
         NORMAL(50f), MINI(30f)
     }
 
+    enum class State {
+        NORMAL, SELECTED
+    }
+
     // XML attributes
     var fabSize by bgInvalidateable(Size.NORMAL)
-    var fabState = 0
+    var fabState = State.NORMAL
         set(value) {
+            field = value
             currFabColor = when (value) {
-                1 -> fabColorSelected
-                0 -> fabColorNormal
-                else -> throw IllegalArgumentException("fabState can be 0/1")
+                State.NORMAL -> {
+                    isSelected = false
+                    fabColorNormal
+                }
+                State.SELECTED -> {
+                    isSelected = true
+                    fabColorSelected
+                }
             }
         }
     var shadowRadius by bgInvalidateable(0f) { _, value ->
@@ -78,13 +87,14 @@ class Fab @JvmOverloads constructor(
         }
     }
     val mAnim = FabScaleAnim(this)
-    private var isBackgroundDrawn = false
+
+    // logic vars
+    private var isBackgroundInitialised = false
     private var isViewMeasured = false
 
     // Init XML Attrs.
     init {
-        val a = context.theme.obtainStyledAttributes(attrSet,
-                R.styleable.Fab, defStyleAttr, defStyleRes)
+        val a = context.theme.obtainStyledAttributes(attrSet, R.styleable.Fab, defStyleAttr, 0)
         try {
             fabSize = when (a.getInteger(R.styleable.Fab_size, 0)) {
                 0 -> Size.NORMAL
@@ -109,7 +119,7 @@ class Fab @JvmOverloads constructor(
         currFabColor = fabColorNormal
         background = CircleDrawable(desiredFabDiameter, currFabColor,
                 shadowRadius, xShadowOffset, yShadowOffset, shadowColor)
-        isBackgroundDrawn = true
+        isBackgroundInitialised = true
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP && shadowRadius == 0f) {
             elevation = 6f.toPixel()
         }
@@ -160,7 +170,7 @@ class Fab @JvmOverloads constructor(
             crossinline onChange: (oldValue: T, newValue: T) -> Unit = { _, _ -> }
     ): ReadWriteProperty<Any?, T> = object : ObservableProperty<T>(initialValue) {
         override fun afterChange(property: KProperty<*>, oldValue: T, newValue: T) {
-            if (isBackgroundDrawn) {
+            if (isBackgroundInitialised) {
                 background = if (isViewMeasured) {
                     CircleDrawable(actualFabDiameter, currFabColor,
                             shadowRadius, xShadowOffset, yShadowOffset, shadowColor)

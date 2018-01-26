@@ -52,7 +52,7 @@ class FloatingMenuManager(context: Context, val view: View) {
                         menu = AttachableFloatingMenu(context, event.rawX, event.rawY - 24f.toPixel())
                         menu.pivotX = event.rawX
                         menu.pivotY = event.rawY - 24f.toPixel()
-                        menu.isAnimating = true
+                        menu.isEntering = true
                         animSet = AnimatorSet()
                         val animX = ObjectAnimator.ofFloat(menu, "scaleX", 0f, 1f)
                         val animY = ObjectAnimator.ofFloat(menu, "scaleY", 0f, 1f)
@@ -62,7 +62,7 @@ class FloatingMenuManager(context: Context, val view: View) {
                         animY.interpolator = OvershootInterpolator()
                         animX.addListener(object : AnimatorListenerAdapter(){
                             override fun onAnimationEnd(animation: Animator?) {
-                                menu.isAnimating = false
+                                menu.isEntering = false
                             }
                         })
                         val params = getDefaultParams()
@@ -83,7 +83,7 @@ class FloatingMenuManager(context: Context, val view: View) {
                         handler.removeCallbacks(longPressedRunnable)
                         shouldRun = false
                     }
-                    if (triggered && menu.isDrawn && !menu.isAnimating) {
+                    if (triggered && menu.isDrawn && !menu.isEntering) {
                         // calculate and animate
                         menu.motionX = event.rawX
                         menu.motionY = event.rawY - 24f.toPixel()

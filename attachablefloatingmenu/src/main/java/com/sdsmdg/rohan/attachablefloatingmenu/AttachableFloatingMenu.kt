@@ -10,43 +10,66 @@ import android.view.animation.DecelerateInterpolator
 import kotlin.math.PI
 import kotlin.math.cos
 import kotlin.math.sin
+import kotlin.properties.ObservableProperty
+import kotlin.reflect.KProperty
 
 class AttachableFloatingMenu @JvmOverloads constructor(
         context: Context,
-        val startX: Float = -1f,
-        val startY: Float = -1f,
+        private val startX: Float = -1f,
+        private val startY: Float = -1f,
         attrSet: AttributeSet? = null,
-        defStyleAttr: Int = 0,
-        defStyleRes: Int = 0
+        defStyleAttr: Int = 0
 ) : ViewGroup(context, attrSet, defStyleAttr) {
 
-    var isAnimating = false
-    var motionX: Float = 0.0f
-        set(value) {
-            if (isAnimating) return
-            field = value
-            animateMe()
-        }
-    var motionY: Float = 0.0f
-        set(value) {
-            if (isAnimating) return
-            field = value
-            animateMe()
-        }
-    var isDrawn: Boolean = false
-    val dTheta get() = -interpolate(startX)
-    var totalAngle = 0.0
-    val _r = 95f.toPixel()
-    val minR = 75f.toPixel()
-    val angle = 42.0
-    val pivotR = 40f.toPixel()
+    internal var isEntering = false
+    internal var motionX by childAnimateable(0.0f)
+    internal var motionY by childAnimateable(0.0f)
+    internal var isDrawn: Boolean = false
+
+    private val initialDrawingAngle get() = -(startX / width * totalAngle)
+    private var totalAngle = 0.0
+
+    // XML attributes
+    /**
+     * total dist from center to child(in pixels)
+     */
+    var r by reqLayoutDelegate(95f.toPixel())
+    /**
+     * least dist from child for starting animation(in pixels)
+     */
+    var minR by reqLayoutDelegate(75f.toPixel())
+    /**
+     * separation between children(in degrees)
+     */
+    var angularSeparation by reqLayoutDelegate(42.0.toRadians())
+    /**
+     * radial distance from initial touch pos to the pivot point for each child(in pixels)
+     */
+    var pivotR by reqLayoutDelegate(40f.toPixel())
+
     private var coordinate = mutableListOf<Point<Double>>()
-    var theta = mutableListOf<Double>()
+    private var theta = mutableListOf<Double>()
     val centerCirclePaint = Paint(Paint.ANTI_ALIAS_FLAG)
-    val interpolator = DecelerateInterpolator(0.8f)
+    private val interpolator = DecelerateInterpolator(0.8f)
+    private val mAngle get() = angularSeparation.toRadians()
+    private var isLayoutDone = false
 
     companion object {
+        @Suppress("unused")
         const val LOG_TAG = "AttachableFloatingMenu"
+    }
+
+    init {
+        val a = context.theme.obtainStyledAttributes(attrSet, R.styleable.Fab, defStyleAttr, 0)
+        try {
+            r = a.getDimension(R.styleable.AttachableFloatingMenu_r, r)
+            minR = a.getDimension(R.styleable.AttachableFloatingMenu_minR, minR)
+            pivotR = a.getDimension(R.styleable.AttachableFloatingMenu_pivotR, pivotR)
+            angularSeparation = a.getFloat(R.styleable.AttachableFloatingMenu_angularSeparation,
+                    angularSeparation.toFloat()).toDouble()
+        } finally {
+            a.recycle()
+        }
     }
 
     init {
@@ -73,13 +96,13 @@ class AttachableFloatingMenu @JvmOverloads constructor(
 
     override fun onSizeChanged(w: Int, h: Int, oldw: Int, oldh: Int) {
         super.onSizeChanged(w, h, oldw, oldh)
-        totalAngle = ((childCount - 1) * angle).toRadians()
+        totalAngle = (childCount - 1) * mAngle
         for (index in 0 until childCount) {
-            theta.add(index, (index * angle).toRadians() + dTheta)
+            theta.add(index, index * mAngle + initialDrawingAngle)
             if (theta[index] < -PI) theta[index] += 2 * PI
             if (theta[index] > PI) theta[index] -= 2 * PI
-            val childCenterX = startX + _r * sin(theta[index])
-            val childCenterY = startY - _r * cos(theta[index])
+            val childCenterX = startX + r * sin(theta[index])
+            val childCenterY = startY - r * cos(theta[index])
             coordinate.add(index, Point(childCenterX, childCenterY))
         }
     }
@@ -87,16 +110,17 @@ class AttachableFloatingMenu @JvmOverloads constructor(
     override fun onLayout(changed: Boolean, l: Int, t: Int, r: Int, b: Int) {
         for (index in 0 until childCount) {
             val child = getChildAt(index) as Fab
-            val left = (coordinate[index].x - child.measuredWidth / 2f).floor()
-            val top = (coordinate[index].y - child.measuredHeight / 2f).floor()
+            val childLeft = (coordinate[index].x - child.measuredWidth / 2f).floor()
+            val childTop = (coordinate[index].y - child.measuredHeight / 2f).floor()
             child.layout(
-                    left, top,
+                    childLeft, childTop,
                     (coordinate[index].x + child.measuredWidth / 2f).floor(),
                     (coordinate[index].y + child.measuredHeight / 2f).floor()
             )
-            child.pivotX = startX - left + pivotR * sin(theta[index]).toFloat()
-            child.pivotY = startY - top - pivotR * cos(theta[index]).toFloat()
+            child.pivotX = (startX - childLeft) + pivotR * sin(theta[index]).toFloat()
+            child.pivotY = (startY - childTop) - pivotR * cos(theta[index]).toFloat()
         }
+        isLayoutDone = true
     }
 
     override fun onDraw(canvas: Canvas) {
@@ -104,27 +128,21 @@ class AttachableFloatingMenu @JvmOverloads constructor(
         isDrawn = true
     }
 
-    /**
-     * @return the interpolated angle
-     */
-    private fun interpolate(x: Float) = x / width * totalAngle
-
     private fun animateMe() {
         for (i in 0 until childCount) {
             val child = getChildAt(i) as Fab
             if (checkConditions(i)) {
                 val dist = getDistance(child.pCenterX, child.pCenterY, motionX, motionY)
                 if (dist > minR) break
-                //child.setLayerType(View.LAYER_TYPE_HARDWARE, null)
                 val dScale = interpolator.getInterpolation((1 - dist / minR).toFloat())
                 val newScale = dScale * 0.27f + 1
                 child.mAnim.animateTo(newScale)
                 when {
-                    child.contains(motionX, motionY) -> child.fabState = 1
-                    else -> child.fabState = 0
+                    child.contains(motionX, motionY) -> child.fabState = Fab.State.SELECTED
+                    else -> child.fabState = Fab.State.NORMAL
                 }
             } else if (child.scaleX != 1f) {
-                child.fabState = 0
+                child.fabState = Fab.State.NORMAL
                 child.mAnim.animateTo(1f)
             }
         }
@@ -132,13 +150,13 @@ class AttachableFloatingMenu @JvmOverloads constructor(
 
     private fun checkConditions(i: Int): Boolean {
         val slopeAngle = -getTheta(startX, startY, motionX, motionY)
-        var midMax = theta[i] + angle.toRadians() / 2
+        var midMax = theta[i] + mAngle / 2
         var max = midMax
         if (max > PI / 2) {
             midMax = PI / 2
             max -= PI
         }
-        var midMin = theta[i] - angle.toRadians() / 2
+        var midMin = theta[i] - mAngle / 2
         var min = midMin
         if (min < -PI / 2) {
             midMin = -PI / 2
@@ -161,5 +179,15 @@ class AttachableFloatingMenu @JvmOverloads constructor(
 
     //private operator fun Float.rangeTo(that: Float) = AbsoluteRange(this, that)
 
+    private fun <T> childAnimateable(initialValue: T) = object : ObservableProperty<T>(initialValue) {
+        override fun beforeChange(property: KProperty<*>, oldValue: T, newValue: T) = !isEntering
+        override fun afterChange(property: KProperty<*>, oldValue: T, newValue: T) = animateMe()
+    }
+
+    private fun <T> reqLayoutDelegate(initialValue: T) = object : ObservableProperty<T>(initialValue) {
+        override fun afterChange(property: KProperty<*>, oldValue: T, newValue: T) {
+            if (isLayoutDone) this@AttachableFloatingMenu.requestLayout()
+        }
+    }
 
 }
