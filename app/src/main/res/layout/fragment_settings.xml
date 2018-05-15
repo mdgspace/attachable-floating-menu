@@ -1,0 +1,137 @@
+<?xml version="1.0" encoding="utf-8"?>
+<android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:padding="16dp">
+
+    <TextView
+        android:id="@+id/menu"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="MENU"
+        android:textColor="@color/colorAccent"
+        android:textSize="14sp"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <EditText
+        android:id="@+id/r_edit_text"
+        android:layout_width="130dp"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="12dp"
+        android:hint="r"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/menu" />
+
+    <EditText
+        android:id="@+id/minR_edit_text"
+        android:layout_width="130dp"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="12dp"
+        android:hint="minR"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/menu" />
+
+    <EditText
+        android:id="@+id/pivotR_edit_text"
+        android:layout_width="130dp"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="12dp"
+        android:hint="pivotR"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/r_edit_text" />
+
+    <EditText
+        android:id="@+id/angular_edit_text"
+        android:layout_width="130dp"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="12dp"
+        android:hint="angle"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/r_edit_text" />
+
+    <TextView
+        android:id="@+id/child"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="22dp"
+        android:text="CHILD"
+        android:textColor="@color/colorAccent"
+        android:textSize="14sp"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/pivotR_edit_text" />
+
+    <TextView
+        android:id="@+id/color_normal_text"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="12dp"
+        android:background="@android:color/white"
+        android:text="#FFFFFFFF"
+        android:textColor="@android:color/black"
+        app:layout_constraintEnd_toStartOf="@+id/color_selected_text"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/child" />
+
+    <TextView
+        android:id="@+id/color_selected_text"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:background="#FFB71C1C"
+        android:text="#FFB71C1C"
+        android:textColor="@android:color/black"
+        app:layout_constraintEnd_toStartOf="@+id/shadow_color_text"
+        app:layout_constraintStart_toEndOf="@id/color_normal_text"
+        app:layout_constraintTop_toTopOf="@id/color_normal_text" />
+
+    <TextView
+        android:id="@+id/shadow_color_text"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:background="@android:color/white"
+        android:text="#FFFFFFFF"
+        android:textColor="@android:color/black"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toEndOf="@id/color_selected_text"
+        app:layout_constraintTop_toTopOf="@id/color_normal_text" />
+
+    <EditText
+        android:id="@+id/shadow_radius_text"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="12dp"
+        android:hint="shadow radius"
+        app:layout_constraintEnd_toStartOf="@id/x_shadow_offset_text"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/color_normal_text" />
+
+    <EditText
+        android:id="@+id/x_shadow_offset_text"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:hint="x offset"
+        app:layout_constraintEnd_toStartOf="@+id/y_shadow_offset_text"
+        app:layout_constraintStart_toEndOf="@id/shadow_radius_text"
+        app:layout_constraintTop_toTopOf="@id/shadow_radius_text" />
+
+    <EditText
+        android:id="@+id/y_shadow_offset_text"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:hint="y offset"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toEndOf="@id/x_shadow_offset_text"
+        app:layout_constraintTop_toTopOf="@id/shadow_radius_text" />
+
+    <Button
+        android:id="@+id/update_button"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="24dp"
+        android:text="UPDATE"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent" />
+
+</android.support.constraint.ConstraintLayout>

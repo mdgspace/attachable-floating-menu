@@ -1,3 +1,5 @@
 <resources>
     <string name="app_name">TestApp</string>
+    <string name="demo">DEMO</string>
+    <string name="settings">SETTINGS</string>
 </resources>

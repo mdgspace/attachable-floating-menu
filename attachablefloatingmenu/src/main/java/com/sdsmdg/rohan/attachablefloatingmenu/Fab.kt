@@ -160,7 +160,7 @@ class Fab @JvmOverloads constructor(
     }
 
     fun contains(x: Float, y: Float): Boolean {
-        getLocationInWindow(arr)
+        getLocationOnScreen(arr)
         return (x - arr[0]) in 0f..(1.37f * width * scaleX) &&
                 (y - arr[1]) in 0f..(1.37f * height * scaleY)
     }
