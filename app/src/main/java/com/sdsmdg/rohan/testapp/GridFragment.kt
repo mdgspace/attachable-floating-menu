@@ -36,8 +36,8 @@ class RvAdapter(context: Context) : RecyclerView.Adapter<RecyclerView.ViewHolder
 
     val menuManager= FloatingMenuManager(context)
 
-    override fun onCreateViewHolder(parent: ViewGroup?, viewType: Int): RecyclerView.ViewHolder {
-        val view = LayoutInflater.from(parent?.context)
+    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RecyclerView.ViewHolder {
+        val view = LayoutInflater.from(parent.context)
                 .inflate(R.layout.item_grid, parent, false)
         return object : RecyclerView.ViewHolder(view) {}
     }
