@@ -41,7 +41,7 @@ class AttachableFloatingMenu @JvmOverloads constructor(
     /**
      * separation between children(in degrees)
      */
-    var angularSeparation by reqLayoutDelegate(42.0.toRadians())
+    var angularSeparation by reqLayoutDelegate(42.0)
     /**
      * radial distance from initial touch pos to the pivot point for each child(in pixels)
      */
