@@ -5,9 +5,9 @@ AttachableFloatingMenu (AFM) is an [Android Library][4] written in Kotlin that p
 ![Sample Image][5]
 
 ## TODOs
-- [] Make AFM compatible with a recycler view. Currently, when AFM is triggered, then any attempt to move the finger across the screen triggers scrolling in the recycler view in the background.
-- [] Handle boundary cases when rendering AFM. For example, the Menu should not go out of the screen when triggered near edges or corners.
-- [] Think of more types of animations ([see this][2] for examples) and implement them.
+- [ ] Make AFM compatible with a recycler view. Currently, when AFM is triggered, then any attempt to move the finger across the screen triggers scrolling in the recycler view in the background.
+- [ ] Handle boundary cases when rendering AFM. For example, the Menu should not go out of the screen when triggered near edges or corners.
+- [ ] Think of more types of animations ([see this][2] for examples) and implement them.
 
 
 <!-- Links -->
